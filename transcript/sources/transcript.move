@@ -1,7 +1,8 @@
 module transcript::transcript {
-    use sui::object::{Self, UID};
+    use sui::object::{Self, UID, ID};
     use sui::tx_context::{Self, TxContext};
     use sui::transfer;
+    use sui::event::{Self};
 
     struct WrappableTranscript has key, store {
         id: UID,
@@ -16,10 +17,27 @@ module transcript::transcript {
         intended_address: address
     }
 
+    // capability object
+    // Type that marks the capability to create, update, and delete transcripts
+    struct TeacherCap has key {
+        id: UID,
+    }
+
+    // event object
+    // Event marking when a transcript has been requested
+    struct TranscriptRequestEvent has copy, drop {
+        // The Object ID of the transcript wrapper
+        transcript_wrapper_id: ID,
+        // The requester of the transcript
+        requester: address,
+        // The intended address of the transcript
+        intended_address: address
+    }
+
     // Error code for when a non-intended address tries to unpack the transcript wrapper
     const ENotIntendedAddress: u64 = 1;
     
-    public entry fun create_wrappable_transcript_object(history: u8, math: u8, literature: u8, ctx: &mut TxContext) {
+    public entry fun create_wrappable_transcript_object(_: &TeacherCap, history: u8, math: u8, literature: u8, ctx: &mut TxContext) {
         let wrappableTranscript = WrappableTranscript {
             id: object::new(ctx),
             history,
@@ -51,6 +69,13 @@ module transcript::transcript {
             transcript,
             intended_address
         };
+
+        event::emit(TranscriptRequestEvent {
+            transcript_wrapper_id: object::uid_to_inner(&folderObject.id),
+            requester: tx_context::sender(ctx),
+            intended_address
+        });
+
         //We transfer the wrapped transcript object directly to the intended address
         transfer::transfer(folderObject, intended_address)
     }
@@ -65,5 +90,18 @@ module transcript::transcript {
         } = folder;
         transfer::transfer(transcript, tx_context::sender(ctx));
         object::delete(id)
+    }
+
+    
+    fun init(ctx: &mut TxContext) {
+        transfer::transfer(TeacherCap {
+            id: object::new(ctx),
+        }, tx_context::sender(ctx));
+    }
+
+    public fun add_additional_teacher(_: &TeacherCap, new_teacher_address: address, ctx: &mut TxContext) {
+        transfer::transfer(TeacherCap {
+            id: object::new(ctx),
+        }, new_teacher_address);
     }
 }

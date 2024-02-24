@@ -29,3 +29,14 @@ $SUI_TESTNET_HOME/sui-ubuntu-x86_64 client call --function request_transcript --
 ```
 $SUI_TESTNET_HOME/sui-ubuntu-x86_64 client call --function unpack_wrapped_transcript --module transcript --package $PACKAGE_ID --json --gas-budget 10000000 --args 0x2155f70a4a775ab67fccc3718f2b1829c245f10fcec8286904a6171fecee7ecf
 ```
+
+# Version 03 (Capability)
+
+```
+$SUI_TESTNET_HOME/sui-ubuntu-x86_64 client call --function create_wrappable_transcript_object --module transcript --package $PACKAGE_ID --json --gas-budget 10000000 --args 0xd5075d69162e9e74b693071274ee895ca28baae6c9deed9af72861fc82b4e56c 7 8 3
+```
+
+```
+$SUI_TESTNET_HOME/sui-ubuntu-x86_64 client call --function request_transcript --module transcript --package $PACKAGE_ID --json --gas-budget 10000000 --args 
+0x96e514a3c63d559e5160196f597ae8ca6633537962eac1a5976ab9a3c0c837d7 0x7c6f6af0c47256d8fa8ed8bfb7057a1503f64ed992656355fce62c5068ff8267
+```
