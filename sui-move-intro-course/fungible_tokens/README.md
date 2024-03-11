@@ -1,0 +1,1 @@
+$SUI_TESTNET_HOME/sui-ubuntu-x86_64 client call --function mint --module managed --package $PACKAGE_ID --args $TREASURYCAP_ID 10000000000 0x8e94820852fb723b6218c9fc1180a4542203c23aa0f752c5a61f61de5486035d --gas-budget 10000000
